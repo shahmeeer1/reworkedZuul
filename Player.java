@@ -22,14 +22,16 @@ public class Player extends Character{
      * @param item
      */
     public void addItem(Item item){
-        // Check if additional weight of item is <= maximum weight capacity
-        if ((item.getWeight() + weight) <= maxWeight){
-            items.add(item);    // If so then add the item to inventory
-            System.out.println(item.getName() + " added to inventory.");
-        }
-        else{   // If not then reject the item
-            System.out.println("Not enough space in inventory");
-        }
+        //  Add the item to inventory
+        assert item != null;
+        items.add(item);
+        weight += item.getWeight(); // add item weight
+        System.out.println(item.getName() + " added to inventory.");
+    }
+
+
+    public int availableSpace(){
+        return (maxWeight - weight);
     }
 
     /**

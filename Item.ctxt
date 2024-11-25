@@ -1,12 +1,19 @@
 #BlueJ class context
 comment0.target=Item
 comment0.text=\r\n\ Enumeration\ class\ Item\ -\ write\ a\ description\ of\ the\ enum\ class\ here\r\n\r\n\ @author\ (your\ name\ here)\r\n\ @version\ (version\ number\ or\ date\ here)\r\n
-comment1.params=name\ weight\ locked
-comment1.target=Item(java.lang.String,\ int,\ boolean)
-comment2.params=locked
-comment2.target=void\ setLocked(boolean)
+comment1.params=name\ weight\ locked\ tradeFor
+comment1.target=Item(java.lang.String,\ int,\ boolean,\ java.lang.String)
+comment2.params=
+comment2.target=java.lang.String\ getName()
+comment2.text=\r\n\ return\ the\ name\ of\ the\ item\r\n\ @return\ String\ -\ name\r\n
 comment3.params=
-comment3.target=java.lang.String\ getName()
+comment3.target=int\ getWeight()
+comment3.text=\r\n\ Get\ the\ weight\ of\ the\ item\r\n\ @return\ int\ -\ weight\r\n
 comment4.params=
-comment4.target=int\ getWeight()
-numComments=5
+comment4.target=java.lang.String\ getTradeFor()
+comment5.params=
+comment5.target=boolean\ isLocked()
+comment6.params=name
+comment6.target=Item\ findByName(java.lang.String)
+comment6.text=\r\n\ Static\ method\ to\ find\ an\ item\ by\ its\ name.\r\n\ @param\ name\ The\ name\ of\ the\ item\ to\ search\ for.\r\n\ @return\ Item\ if\ found,\ otherwise\ null.\r\n
+numComments=7

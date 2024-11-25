@@ -46,7 +46,25 @@ public enum Item
         return weight;
     }
     
-    public String tradeFor(){
+    public String getTradeFor(){
         return tradeFor;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    /**
+     * Static method to find an item by its name.
+     * @param name The name of the item to search for.
+     * @return Item if found, otherwise null.
+     */
+    public static Item findByName(String name) {
+        for (Item item : Item.values()) {
+            if (item.getName().equalsIgnoreCase(name)) {
+                return item;
+            }
+        }
+        return null; // Item not found.
     }
 }

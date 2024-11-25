@@ -21,8 +21,6 @@ public class Npc extends Character{
     private Room currentRoom;   // The room the NPc is currently in
     private int counter = 0;    // The number of movements the player has made since the last NPC move
     private int movementFrequency = 2;  // How many player moves the NPc must wait before moving
-    private ArrayList<Item> inventory = new ArrayList<>();
-    private ArrayList<Item> trade = new ArrayList<>();
     private static ArrayList<Npc> npcList = new ArrayList<>();  // Stores all instances of NPC Class
 
 
@@ -94,7 +92,7 @@ public class Npc extends Character{
 
     public void printInventory(){
 
-        String inventory = "Inventory:";
+        String inventory = name + "'s Inventory:";
         for (Item item : items){
             inventory += " " + item.getName();
         }
@@ -170,11 +168,4 @@ public class Npc extends Character{
         this.movementFrequency = movementFrequency;
     }
 
-    public ArrayList<Item> getInventory() {
-        return inventory;
-    }
-
-    public void addToInventory(Item item) {
-        inventory.add(item);
-    }
 }

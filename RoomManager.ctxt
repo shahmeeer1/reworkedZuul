@@ -1,7 +1,7 @@
 #BlueJ class context
 comment0.target=RoomManager
 comment1.params=name\ room
-comment1.target=void\ addRoom(java.lang.String,\ Room)
+comment1.target=Room\ addRoom(java.lang.String,\ Room)
 comment1.text=\r\n\ Adds\ room\ to\ list\ of\ rooms\r\n\ @param\ room\r\n
 comment2.params=name
 comment2.target=Room\ getRoom(java.lang.String)

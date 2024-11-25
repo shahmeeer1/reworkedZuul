@@ -67,12 +67,7 @@ public class RoomManager {
      * @return boolean true if room has transporter room status
      */
     public boolean checkTransporterRoom(Room currentRoom){
-        if (transporterRoom.equals(currentRoom)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return transporterRoom.equals(currentRoom);
     }
 
 

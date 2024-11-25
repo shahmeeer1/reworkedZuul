@@ -35,6 +35,14 @@ public class Character{
         items.remove(item);
     }
 
+    public ArrayList<Item> getInventory(){
+        return items;
+    }
+
+    public boolean hasItem(Item item){
+        return items.contains(item);
+    }
+
     /**
      * Output the contents of the inventory to the terminal
      */

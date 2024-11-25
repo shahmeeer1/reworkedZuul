@@ -22,11 +22,10 @@ public class Room
     private String description;
     private HashMap<String, Room> exits;        // stores exits of this room.
     private ArrayList<Item> storage;
-    //private RoomManager roomManager = new RoomManager();;
 
     // locked rooms cannot be accessed but may be unlocked using certain items
     private boolean locked;
-    private List<Item> requiredItems;
+    private List<Item> requiredItems = new ArrayList<>();
 
 
 
@@ -50,8 +49,6 @@ public class Room
                 requiredItems.add(item);
             }
         }
-
-
     }
 
     /**
@@ -125,7 +122,6 @@ public class Room
      * @return List if room is locked
      */
     public List<Item> getRequiredItems(){
-        assert locked;  // Throws error if called on unlocked room
         return requiredItems;   // Return list of items to unlock room
     }
 
@@ -138,6 +134,17 @@ public class Room
     }
 
     /**
+     * Display the contents of the room's storage as a string
+     */
+    public void showStorage(){
+        String stored = "Storage:";
+        for (Item item: storage){
+            stored += " " + item.getName();
+        }
+        System.out.println(stored);
+    }
+
+    /**
      * Method to add items to room storage
      * @param item
      */
@@ -145,8 +152,31 @@ public class Room
         storage.add(item);
     }
 
+    public Item getItem(String itemName){
+        for (Item item: storage){
+            if (!(itemName == null) && item.getName().equalsIgnoreCase(itemName)){
+                return item;
+            }
+        }
+        return null;
+    }
+
     public boolean isLocked() {
         return locked;
+    }
+
+    public void unlockRoom(){
+        locked = false;
+    }
+
+    public Item removeItem(String itemName){
+        for (Item item: storage) {
+            if (!(itemName == null) && item.getName().equalsIgnoreCase(itemName)) {
+                storage.remove(item);
+                return item;
+            }
+        }
+        return null;
     }
 }
 
