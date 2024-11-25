@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=RoomManager
+comment1.params=name\ room
+comment1.target=void\ addRoom(java.lang.String,\ Room)
+comment1.text=\r\n\ Adds\ room\ to\ list\ of\ rooms\r\n\ @param\ room\r\n
+comment2.params=name
+comment2.target=Room\ getRoom(java.lang.String)
+comment3.params=room
+comment3.target=void\ setTransporterRoom(Room)
+comment3.text=\r\n\ Gives\ room\ transporter\ room\ status\r\n\ @param\ room\ -\ the\ room\ to\ set\ as\ transporter\ room\r\n
+comment4.params=
+comment4.target=Room\ getRandomRoom()
+comment4.text=\r\n\ Returns\ a\ randomly\ selected\ room\ from\ the\ list\ of\ rooms\r\n\ @return\ Room\r\n
+comment5.params=currentRoom
+comment5.target=boolean\ checkTransporterRoom(Room)
+comment5.text=\r\n\ Checks\ if\ current\ room\ has\ transporter\ room\ status\r\n\ @param\ currentRoom\r\n\ @return\ boolean\ true\ if\ room\ has\ transporter\ room\ status\r\n
+numComments=6

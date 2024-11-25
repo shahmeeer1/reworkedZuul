@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Back
+comment1.params=
+comment1.target=Back()
+comment2.params=room
+comment2.target=void\ push(Room)
+comment2.text=\r\n\ Push\ method\ to\ add\ rooms\ to\ the\ stack.\r\n\ @param\ room\ -\ the\ room\ just\ exited\r\n
+comment3.params=
+comment3.target=Room\ pop()
+comment3.text=\r\n\ Method\ used\ to\ pop\ a\ room\ off\ the\ top\ of\ the\ stack.\r\n\ This\ is\ the\ room\ that\ the\ player\ is\ returning\ to.\r\n\ The\ push\ method\ has\ been\ modified\ to\ keep\ the\ bottom\ element\r\n\ on\ the\ stack.\ This\ is\ the\ room\ where\ the\ player\ starts\ the\ game.\r\n\ @return\ Room\ -\ previous\ room\ the\ player\ was\ in\r\n
+numComments=4

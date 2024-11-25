@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.target=Character
+comment1.params=
+comment1.target=Character()
+comment2.params=item
+comment2.target=void\ addItem(Item)
+comment2.text=\r\n\ Method\ to\ add\ an\ item\ to\ inventory\r\n\ @param\ item\r\n
+comment3.params=item
+comment3.target=void\ removeItem(Item)
+comment3.text=\r\n\ Method\ to\ remove\ an\ item\ from\ inventory\r\n\ @param\ item\r\n
+comment4.params=
+comment4.target=void\ printInventory()
+comment4.text=\r\n\ Output\ the\ contents\ of\ the\ inventory\ to\ the\ terminal\r\n
+numComments=5
