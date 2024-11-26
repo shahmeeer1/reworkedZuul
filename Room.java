@@ -6,15 +6,17 @@ import java.util.HashMap;
 /**
  * Class Room - a room in an adventure game.
  *
- * This class is part of the "World of Zuul" application. 
- * "World of Zuul" is a very simple, text based adventure game.  
+ * This class is part of the "Westeros" application.
  *
  * A "Room" represents one location in the scenery of the game.  It is 
  * connected to other rooms via exits.  For each existing exit, the room 
  * stores a reference to the neighboring room.
+ *
+ * Each room also has its own inventory and can store items, either by
+ * default or if the player adds them in.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author  Michael Kölling, David J. Barnes and Shahmeer Khalid
+ * @version 2024.11.26
  */
 
 public class Room 
@@ -146,8 +148,14 @@ public class Room
         storage.add(item);
     }
 
+    /**
+     * Retrieve items stored in the room by name
+     * @param itemName - name of the item to retrieve
+     * @return the item which was retrieved: null if it was not found
+     */
     public Item getItem(String itemName){
         for (Item item: storage){
+            // Check every item in storage and check if their name matches user input
             if (!(itemName == null) && item.getName().equalsIgnoreCase(itemName)){
                 return item;
             }
@@ -155,24 +163,43 @@ public class Room
         return null;
     }
 
+    /**
+     * Check whether an item stored in a room is locked
+     * @return true if the item is locked
+     */
     public boolean isLocked() {
         return locked;
     }
 
+    /**
+     * Set a room status to unlocked
+     */
     public void unlockRoom(){
         locked = false;
     }
 
+    /**
+     * Remove an item from a rooms inventory by name
+     * @param itemName - name of item to remove
+     * @return the item which was removed
+     */
     public Item removeItem(String itemName){
         for (Item item: storage) {
+            // Check every item and if there is a name match remove it form inventory
             if (!(itemName == null) && item.getName().equalsIgnoreCase(itemName)) {
                 storage.remove(item);
-                return item;
+                return item;    // Return the item to caller once removed
             }
         }
         return null;
     }
 
+    /**
+     * A quest is an extra description for locked rooms to add some more details to the
+     * story or to give the player hints on where to find the item needed to unlock it.
+     * This method gets that quest.
+     * @param quest teh rooms extra description.
+     */
     public void setQuest(String quest) {
         this.quest = quest;
     }

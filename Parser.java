@@ -2,9 +2,8 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
- * This class is part of the "World of Zuul" application. 
- * "World of Zuul" is a very simple, text based adventure game.  
- * 
+ * This class is part of the "Westeros" application.
+ *
  * This parser reads user input and tries to interpret it as an "Adventure"
  * command. Every time it is called it reads a line from the terminal and
  * tries to interpret the line as a three word command. It returns the command

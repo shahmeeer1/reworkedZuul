@@ -5,7 +5,6 @@
  * In this case, it has been used to implement a transporter room which teleports
  * the player to a random room in the game.
  *
- * The class only makes use of static fields and methods and no instance is created.
  *
  * @author Shahmeer Khalid
  * @version 2024.11.23
@@ -30,6 +29,11 @@ public class RoomManager {
         return room;
     }
 
+    /**
+     * Search for a room by name
+     * @param name - name of the room to return
+     * @return Room
+     */
     public  Room getRoom(String name){
         return roomList.get(name);
     }
@@ -44,12 +48,12 @@ public class RoomManager {
 
     /**
      * Returns a randomly selected room from the list of rooms
-     * @return Room
+     * @return randomly selected room
      */
     public  Room getRandomRoom() {
         Random random = new Random();
-        Set<String> keySet = roomList.keySet();
-        ArrayList<String> keys = new ArrayList<>(keySet);
+        Set<String> keySet = roomList.keySet(); // Get list of room names
+        ArrayList<String> keys = new ArrayList<>(keySet);   // Convert keyset from set to array
         Room newRoom;
         do {
             // Get random room from roomList and assign to newRoom
@@ -63,7 +67,7 @@ public class RoomManager {
 
     /**
      * Checks if current room has transporter room status
-     * @param currentRoom
+     * @param currentRoom - room player is currently in
      * @return boolean true if room has transporter room status
      */
     public boolean checkTransporterRoom(Room currentRoom){

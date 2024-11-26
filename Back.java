@@ -2,7 +2,8 @@
  * Class Back - A stack used to implement a back feature into the game.
  *
  * This class allows the user to step back to the room they entered the current room from.
- * This class is essentially an implementation of a stack.
+ * This class is essentially an implementation of a stack with a slight modification to
+ * the pop method; to prevent popping off the element at index 0.
  *
  * @author Shahmeer Khalid
  * @version 2024.11.23
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 public class Back {
     private ArrayList<Room> stack;
-    private int pointer;
+    private int pointer;    // Every stack needs a pointer
 
     public Back(){
         stack = new ArrayList<>();

@@ -36,6 +36,7 @@ public class Game
      */
     public Game() 
     {
+        // Create objects and create
         stack = new Back();
         parser = new Parser();
         roomManager = new RoomManager();
@@ -54,7 +55,7 @@ public class Game
                 dragonStone, dorne, casterlyRock, highGarden, stormsEnd, ironThrone;
 
 
-        // create the rooms. STRING NAMES OF LOCATIONS ARE IN LOWER CASE WITH SPACES FORMAT.
+        // Initialise rooms with descriptions, lcok status and key items. Add them to HashMap in RoomManager class
         kingsLanding = roomManager.addRoom("kings landing", new Room("kings landing","in King's Landing", true, Item.GEM));
         winterfell = roomManager.addRoom("winterfell",new Room("winterfell","in winterfell", false));
         theWall = roomManager.addRoom("the wall",new Room("the wall", "at the wall", false));
@@ -67,8 +68,8 @@ public class Game
         ironThrone = roomManager.addRoom("iron throne",new Room("iron throne", "sitting on the iron throne", true,
                                 Item.SWORD, Item.CROWN, Item.DRAGONEGG));
 
-        // Add quests for locked rooms. A quest is simply some text to advance the story of the game
-        //  and assist the player
+        // Add quests to rooms with locked exits.
+        // Quests are only related to the story of the game, no additional functionality.
         ironThrone.setQuest("Do you dare to play the Game of Thrones...");
         dragonStone.setQuest("The key to Dragon Stone lies in the lion's den");
         kingsLanding.setQuest("King's Landing...The heart of the Seven Kingdoms.\nTo gain entry, seek the item hidden where the river bends...");
@@ -109,13 +110,17 @@ public class Game
         stormsEnd.setExit("north", dragonStone);
         stormsEnd.setExit("west", dorne);
 
-        addItems(); // Add items to room storage
-        currentRoom = winterfell;  // Start game in winterfell
-        stack.push(currentRoom);    // Add  first location to stack
+        addItems(); // Add items to rooms
+        currentRoom = winterfell;  // Starting room for player
+        stack.push(currentRoom);    // push first location to 'back' stack
         roomManager.setTransporterRoom(theWall); // Set transporter room
     }
 
+    /**
+     * Method adds items to specific rooms.
+     */
     private void addItems(){
+        // Retrieve the room from the HashMap of all rooms and add an item to it
         roomManager.getRoom("high garden").addToStorage(Item.COMPASS);
         roomManager.getRoom("dragon stone").addToStorage(Item.CROWN);
         roomManager.getRoom("casterly rock").addToStorage(Item.DAGGER);
@@ -126,12 +131,18 @@ public class Game
         roomManager.getRoom("storms end").addToStorage(Item.FEATHER);
     }
 
+    /**
+     * Creates and initializes NPCs. Items are added to npc inventory
+     */
     private void createNpc(){
         // Create two NPCs. Add their names, descriptions and starting locations
         Npc jon = new Npc("Jon", "Jon Snow, the son of Ned Stark", roomManager.getRoom("winterfell"));
         Npc merchant = new Npc("Merchant", "The merchant is a trader from Braavos. A mysterious island accross the Narrow Sea", roomManager.getRoom("riverrun"));
-        jon.addItem(Item.GOLD);
-        merchant.addItem(Item.DRAGONEGG);
+        jon.addItem(Item.GOLD); // Give Jon an item
+        merchant.addItem(Item.DRAGONEGG);   // Give Merchant an item
+
+        // Deciding which item to give each npc should be planned beforehand and should reflect enums in Items class.
+        // This is to allow the game to flow smoothly and be possible to complete
 
     }
 
@@ -141,39 +152,35 @@ public class Game
     public void play() 
     {
         if(!active){return;}
+        /*
+        Do not start if game is inactive. This is to prevent a player calling the play method
+        on the game a second time after they have already quit or won the game.
+         */
 
-        printWelcome(); // output welcome message
+        printWelcome(); // Display welcome message
 
-        // Enter the main command loop.  Here we repeatedly read commands and
-        // execute them until the game is over.
-        // Start by checking if a Npc is in the starting room. If so, output appropriate message
-        Npc.npcInRoom(currentRoom);
-        // Flags indicating game status
-        boolean finished = false;
-        boolean won = false;
-        while (!finished && !won) { // Loop whilst both variables are false
+        Npc.npcInRoom(currentRoom); // Check if any npcs are in the starting room
 
+        boolean finished = false;   // Flag to track if player quit
+        boolean won = false;        // Flag to track if player won game
+
+        while (!finished && !won) {
             Command command = parser.getCommand();  // Read users input
             finished = processCommand(command); // Process users input
-            won = winCheck();   // Check if User has won the game
+            won = winCheck();   // Check if player has won the game
         }
-        // when user wins or quits, this is set to false.
-        // This stops the user from trying to continue playing the game after it has finished.
-        active = false;
+
+        active = false; // Mark game as inactive
         System.out.println("\nThank you for playing!");
     }
 
     /**
-     * Print out the opening message for the player.
+     * Display game'sopening message
      */
     private void printWelcome()
     {
         System.out.println();
-        //Terminal.doubleBar();
-        //Terminal.doubleBar();
         System.out.println("Welcome to Westeros!");
-        //Terminal.doubleBar();
-        //Terminal.doubleBar();
         System.out.println();
         System.out.println("You are a Nobleman in Westeros, in the year 214 AC (After Conquest).");
         System.out.println("The realm is in turmoil, and the battle for power rages across the land.");
@@ -181,8 +188,7 @@ public class Game
         System.out.println("Will you claim it, or fall victim to the games of power?");
         System.out.println("The choice is yours, but beware...");
         System.out.println("In the game of thrones, you win or you die.\n");
-        System.out.println("Type 'help' if you need help.");
-        //Terminal.singleBar();
+        System.out.println("Type 'help' to view game commands.");
         System.out.println(currentRoom.getLongDescription());
     }
 
@@ -204,25 +210,25 @@ public class Game
         if (commandWord.equals("help")) {
             printHelp();
         }
-        else if (commandWord.equals("go")) {
+        else if (commandWord.equals("go")) {    // Move to different room
             goRoom(command);
         }
-        else if (commandWord.equals("quit")) {
+        else if (commandWord.equals("quit")) {  // Quit game
             wantToQuit = quit(command);
         }
-        else if (commandWord.equals("search")) {
+        else if (commandWord.equals("search")) {// Search room for items
             search(command);
         }
-        else if (commandWord.equals("take")) {
+        else if (commandWord.equals("take")) {  // Take item from room
             take(command);
         }
-        else if (commandWord.equals("back")) {
+        else if (commandWord.equals("back")) {  // Move to previous room
             back();
         }
-        else if (commandWord.equals("drop")){
+        else if (commandWord.equals("drop")){   // Drop item from inventory
             dropItem(command);
         }
-        else if(commandWord.equals("trade")){
+        else if(commandWord.equals("trade")){   // Trade item with npc
             trade(command);
         }
         // else command not recognised.
@@ -238,8 +244,9 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("You are an ambitious knight of the Seven Kingdoms");
+        System.out.println("who wishes to be king.");
+        System.out.println("Find a Sword, Crown and Dragon Egg to claim the throne.");
         System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
@@ -249,7 +256,7 @@ public class Game
      * Try to in to one direction. If there is an unlocked exit.
      * If the exit is locked, try and unlock it.
      * Otherwise, print an error message.
-     * @param command - contains the direction
+     * @param command - contains the direction the player wants to go
      */
     private void goRoom(Command command) 
     {
@@ -265,14 +272,16 @@ public class Game
         Room nextRoom = currentRoom.getExit(direction);
 
         if (nextRoom == null) {
+            // No exit in this direction
             System.out.println("There is no door!");
             return;
         }
 
-        // Check if the room can be unlocked
+        // Check if the room is locked
         if (nextRoom.isLocked()) {
             if (!canUnlock(nextRoom)){   // If room cannot be unlocked, return
                 System.out.println("The room is locked...");
+                // Print any additional information related to unlocking the room
                 System.out.println(nextRoom.getQuest());
                 return;
             }
@@ -280,15 +289,18 @@ public class Game
             unlockRoom(nextRoom);
         }
 
-        // Check if the room is the transporter room
+        // Check if the room is the transporter room (teleportation)
         if (roomManager.checkTransporterRoom(nextRoom)){
+            // select a random room
             nextRoom = roomManager.getRandomRoom();
+
             // Check if the random room is locked
-            // If so, check if user can unlock it
+
             while (nextRoom.isLocked()){
-                // If they have not, generate a new room until one that can be accessed is found
+                // Find a new random room until an unlocked one is found
+
                 nextRoom = roomManager.getRandomRoom();
-                // If room can be unlocked, unlock it.
+                // Unlock the room if possible
                 unlockRoom(nextRoom);
             }
             System.out.println("You found a portal and decided to step through " +
@@ -296,44 +308,48 @@ public class Game
         }
 
         // move player into this room
-        stack.push(currentRoom);    // Add current room to stack
+        stack.push(currentRoom);    // Push current room to the stack (for backtracking)
         currentRoom = nextRoom;     // Move to next room
         System.out.println();
-        System.out.println(currentRoom.getLongDescription());   // print description of room
+        System.out.println(currentRoom.getLongDescription());   // Print description of room
         Npc.moveNpc();// Move NPCs to new room
-        Npc.npcInRoom(currentRoom);
+        Npc.npcInRoom(currentRoom); // Check and alert player of any npcs in the room
 
     }
 
     /**
-     * Check if a room is locked.
-     * @param nextRoom
+     * Check if the room can be unlocked by the player based on required items.
+     * @param nextRoom - the room to check
      * @return true if room can be unlocked
      */
     private boolean canUnlock(Room nextRoom){
-        List<Item> requirements = nextRoom.getRequiredItems();
+        List<Item> requirements = nextRoom.getRequiredItems();  // Items needed to unlock
         if (requirements.isEmpty()){return false;}
+        // If no items are required, the room cannot be unlocked
+
+        // Check if the player has all the required items
         for (Item item: requirements){
+            // If any are missing, the room cannot be unlocked
             if (!player.hasItem(item)){
                 return false;
             }
         }
-        return true;
+        return true;    // All required items are present, the room can be unlocked
     }
 
     /**
-     * Remove required items to unlock the room from player's inventory.
+     * Unlock the room and remove required items from players inventory
      * Update the status of the room to unlocked.
-     * @param nextRoom
+     * @param nextRoom - The room to unlock
      */
     private void unlockRoom(Room nextRoom){
-        // Retrieve room storage and player inventory
+        // Retrieve list of items needed to unlock room
         List<Item> requirements = nextRoom.getRequiredItems();
         // Remove required items from player inventory
         for (Item item: requirements){
             player.removeItem(item);
         }
-        // Update room status to unlocked
+        // Mark room as unlocked
         nextRoom.unlockRoom();
 
     }
@@ -345,6 +361,7 @@ public class Game
      */
     private boolean quit(Command command) {
         if(command.getSecondWord() != null) {
+            // If a second word was provided we don't want to quit
             System.out.println("Quit what?\n");
             return false;
         }
@@ -354,8 +371,8 @@ public class Game
     }
 
     /**
-     * "Search your inventory or search the room for items"
-     * @param command - To check what user wants to search
+     * "Allows player to view items available in their inventory or room"
+     * @param command - Search action
      */
     private void search(Command command){
         if(!command.hasSecondWord()) {
@@ -364,8 +381,8 @@ public class Game
             return;
         }
 
+        // Display the items in the player's inventory.
         if (command.getSecondWord().equalsIgnoreCase("inventory")){
-            // Display the items in the player's inventory.
             player.printInventory();
         }
         else if (command.getSecondWord().equalsIgnoreCase("room")){
@@ -381,7 +398,7 @@ public class Game
     /**
      * Take an item from the room and add it to inventory if there is space.
      * If not, print an error message.
-     * @param command
+     * @param command - command containing item to take
      */
     private void take(Command command){
         if(!command.hasSecondWord()) {
@@ -390,18 +407,20 @@ public class Game
             return;
         }
 
-        // Try to retrieve the item from the room
+        // Retrieve item from room based on name
         Item itemToTake = currentRoom.getItem(command.getSecondWord());
 
         if (itemToTake == null){
+            // Item doesnt exist in the room
             System.out.println("Take what?");
             return;
         }
         else if (itemToTake.isLocked()){
-            // Some items cannot be picked up
+            // Item cannot be picked up because it's locked
             System.out.println("Couldn't take this item");
             return;
         }
+
         // Check if there is enough space to fit the item in inventory.
         if (player.availableSpace() >= itemToTake.getWeight()){
 
@@ -410,6 +429,7 @@ public class Game
             player.addItem(currentRoom.removeItem(command.getSecondWord()));
         }
         else{
+            // If there's not enough space, inform the player
             System.out.println("Not enough space in inventory");
         }
 
@@ -420,7 +440,7 @@ public class Game
      * Utilizes stack data structure to store previously visited rooms in order.
      */
     private void back(){
-        // Pop the previously visited room from the stack
+        // Pop the last room form the stack
         Room room = stack.pop();
 
         // Pop method will return null if there is no previous room to move to
@@ -428,11 +448,11 @@ public class Game
             System.out.println("\nYou are in the room you started in...");
         }
         else{
-            // player moves to previous room
+            // move the player back to the previous room
             currentRoom = room;
             System.out.println(currentRoom.getLongDescription());
             Npc.moveNpc();// Move NPCs to new room
-            Npc.npcInRoom(currentRoom);
+            Npc.npcInRoom(currentRoom); // Update Npcs in the room
 
         }
     }
@@ -440,7 +460,7 @@ public class Game
     /**
      * Drop an item from inventory. Dropped item gets stored in room.
      * format - drop [item to drop]
-     * @param command
+     * @param command - Contains the name of the item to drop
      */
     private void dropItem(Command command){
 
@@ -467,61 +487,73 @@ public class Game
     }
 
 
-
+    /**
+     * Method allowing the user to trade items with NPC characters.
+     * Items that can be traded; and what they will be traded for
+     * can be defined in the Items class. This class simply
+     * implements the procedure of validating a trade and moving items
+     * between inventories.
+     * command format - trade [NPC name] [Item to give to npc]
+     * @param command - Contains the npc to trade with and the item to trade
+     */
     private void trade(Command command){
 
         // Ensure that user input has second and third word
+        // otherwise we don't know who or what to trade.
         if(!command.hasSecondWord() || !command.hasThirdWord()){
             System.out.println("Trade what?");
             return;
         }
-        // Ensure that npc they wish to trade with is in the room
+        // Get the npc to trade with
         Npc npc = Npc.getNpc(command.getSecondWord());
 
         // validate the npc
         if (!npcTradeValidation(npc)) return;
 
+        // View which items the npc has in their inventory
         if (command.getThirdWord().equalsIgnoreCase("offer")){
-            npc.printInventory();
+            npc.printInventory();   // Output the npcs inventory
             return;
         }
-
-        // The user command will contain the item they wish to receive.
-        // check if the item name they have entered exists
-
+        // Retrieve by name the item the player wants to receive from the trade
         Item itemToReceive = Item.findByName(command.getThirdWord());
         if (itemToReceive == null){
+            // In the case that the player enters an invalid name
             System.out.println("Trade what item?");
             return;
         }
 
-        // Check if npc has that item
-        if(!npc.hasItem(itemToReceive)){
+        // Check if item to receive form trade is present in npcs inventory
+        if(!npc.hasItem(itemToReceive)){    // If npc doesnt have entered item
             System.out.println(npc.getName() + " does not have this item");
             return;
         }
 
-        // try to get the item the npc wants in return
+        // Retrieve name of the item player must possess to trade
         String itemToGiveName = itemToReceive.getTradeFor();
-        if (itemToGiveName == null){
+        if (itemToGiveName == null){    // getTradeFore() returns null if item can't be traded
             System.out.println("You do not have anything " + npc.getName() +" wants...");
             return;
         }
+        // If not null, retrieve the item by name
         Item itemToGive = Item.findByName(itemToGiveName);
 
-        // check if the player has that item
+        // check if the player has that item in inventory
         if(!player.hasItem(itemToGive)){
+            // print error and return if player doesn't.
             System.out.println("You do not have anything " + npc.getName() + " wants...");
             return;
         }
 
-        // swap items and remove from inventories
+        // Remove and add appropriate items to npc inventory
         npc.removeItem(itemToReceive);
         npc.addItem(itemToGive);
 
+        // Remove appropriate item from player's inventory
         player.removeItem(itemToGive);
 
-        // If player has enough space in inventory, add the item otherwise add it to room storage
+        // If player has enough space in inventory, add the item to inventory
+        // otherwise add it to room storage
         if (itemToReceive.getWeight() > player.availableSpace()){
             System.out.println("\nOpps! you don't have enough space in you inventory");
             System.out.println("The item was dropped somewhere in the room");
@@ -533,11 +565,19 @@ public class Game
 
     }
 
+    /**
+     * Class that validates the npc during the trading procedure. It ensures that the named
+     * npc exists and is in the current room.
+     * @param npc - The npc the player wishes to trade with
+     * @return true if the npc exists and is int he player's room
+     */
     private boolean npcTradeValidation(Npc npc) {
+        // If player command contained invalid npc name
         if (npc == null){
             System.out.println("Trade Who?");
             return false;
         } else if (!npc.getCurrentRoom().equals(currentRoom)) {
+            // If npc not in same room as player
             System.out.println(npc.getName() + " is not at this location");
             return false;
         }
@@ -548,7 +588,7 @@ public class Game
     /**
      * Method to check if the player has won the game.
      * In this game, the game is won if the player enters the 'iron throne' room.
-     * The room is locked so they must complete the quest to unlock it first.
+     * The Iron Throne room must first be unlocked
      * @return true if player has won the game
      */
     private boolean winCheck(){

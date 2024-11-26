@@ -18,16 +18,19 @@
 
 public class Command
 {
+    // The words to extract from the commands
     private String commandWord;
     private String secondWord;
     private String thirdWord;
 
     /**
-     * Create a command object. First and second word must be supplied, but
-     * either one (or both) can be null.
+     * Create a command object. First three words must be supplied, but
+     * may be null.
      * @param firstWord The first word of the command. Null if the command
      *                  was not recognised.
      * @param secondWord The second word of the command.
+     *
+     * @param thirdWord The third word of the command
      */
     public Command(String firstWord, String secondWord, String thirdWord)
     {

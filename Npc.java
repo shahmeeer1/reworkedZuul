@@ -1,4 +1,3 @@
-
 /**
  * Class Npc - Non-playable characters can be created and added to the game.
  *
@@ -40,10 +39,15 @@ public class Npc extends Character{
         return npcList;
     }
 
+    /**
+     * Class method to move every npc to a new room. Npcs are only moved
+     * to rooms that are unlocked and are connected to their current room.
+     */
     public static void moveNpc(){
         Random randnum = new Random();
         Room newRoom;
 
+        // Every npc is checked
         for (Npc npc: npcList){
             // Npc may only move on every n-th turn. n defaults to 2
             if (npc.getCounter() < npc.getMovementFrequency()){
@@ -51,10 +55,10 @@ public class Npc extends Character{
                 npc.updateCounter(false);
                 continue;
             }
-            else{npc.updateCounter(true);}
+            else{npc.updateCounter(true);}  // Indicate that the npc will move on  the next turn
 
-            Room currentRoom = npc.getCurrentRoom();
-            ArrayList<Room> exits = currentRoom.getExits();
+            Room currentRoom = npc.getCurrentRoom();    // Retrieve room npc is currently in
+            ArrayList<Room> exits = currentRoom.getExits(); // Get list of all rooms connected to current room
 
             do{
                 // Randomly select a room from list of exits
@@ -69,31 +73,47 @@ public class Npc extends Character{
         }
     }
 
+    /**
+     * Retrieve an npc by name
+     * @param name - name of npc to retrieve
+     * @return - npc object
+     */
     public static Npc getNpc(String name){
+        // Iterate through list of npcs
         for(Npc npc: npcList){
+            // Check every npcs name to see if there is a match
             if (npc.getName().equalsIgnoreCase(name)){
                 return npc;
             }
         }
-        return null;
+        return null;    // No match was found
     }
 
+    /**
+     * Check if a npc is in the same room as the player
+     * If so, let the player know by outputting a message.
+     * @param currentRoom - room that the player is currently in
+     */
     public static void npcInRoom(Room currentRoom){
+        // Check every npc
         for (Npc npc: npcList){
             try{
-                if (npc.getCurrentRoom().equals(currentRoom)) {
+                if (npc.getCurrentRoom().equals(currentRoom)) { // If npcs and player in same room
                     System.out.println();
                     System.out.println("You've bumped into " + npc.getName());
                 }
-            } catch (Exception e) {System.out.println("Npc not initialised properly");}
+            } catch (Exception e) {System.out.println("Npc not initialised properly");} // If npc is not in a room
         }
     }
 
 
+    /**
+     * Displayt he contents of the npcs inventory to the player
+     */
     public void printInventory(){
-
         String inventory = name + "'s Inventory:";
         for (Item item : items){
+            // Retrieve the name of every object and append to string
             inventory += " " + item.getName();
         }
         System.out.println(inventory);
@@ -118,7 +138,7 @@ public class Npc extends Character{
 
     /**
      * Get NPCs description
-     * @return
+     * @return - npc description
      */
     public String getDescription() {
         return description;
@@ -126,7 +146,7 @@ public class Npc extends Character{
 
     /**
      * Get the NPCs name
-     * @return
+     * @return - name of npc
      */
     public String getName() {
         return name;
@@ -162,7 +182,7 @@ public class Npc extends Character{
 
     /**
      * Set the number of player moves the NPC must wait before moving
-     * @param movementFrequency - int
+     * @param movementFrequency - how often the npc can move
      */
     public void setMovementFrequency(int movementFrequency) {
         this.movementFrequency = movementFrequency;
