@@ -20,6 +20,7 @@ import java.util.HashMap;
 public class Room 
 {
     private String description;
+    private String quest;
     private HashMap<String, Room> exits;        // stores exits of this room.
     private ArrayList<Item> storage;
 
@@ -61,14 +62,7 @@ public class Room
         exits.put(direction, neighbor);
     }
 
-    /**
-     * @return The short description of the room
-     * (the one that was defined in the constructor).
-     */
-    public String getShortDescription()
-    {
-        return description;
-    }
+
 
     /**
      * Return a description of the room in the form:
@@ -102,7 +96,7 @@ public class Room
      * @param direction The exit's direction.
      * @return The room in the given direction.
      */
-    public Room getExit(String direction) 
+    public Room getExit(String direction)
     {
         return exits.get(direction);
     }
@@ -178,5 +172,15 @@ public class Room
         }
         return null;
     }
+
+    public void setQuest(String quest) {
+        this.quest = quest;
+    }
+
+    /**
+     *  Method to set the quest for a room. A quest adds to the game's storyline and give the player information
+     *  on where they can find the items to unlock a locked room
+     */
+    public String getQuest(){return quest;}
 }
 

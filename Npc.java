@@ -71,7 +71,7 @@ public class Npc extends Character{
 
     public static Npc getNpc(String name){
         for(Npc npc: npcList){
-            if (npc.getName().equals(name)){
+            if (npc.getName().equalsIgnoreCase(name)){
                 return npc;
             }
         }

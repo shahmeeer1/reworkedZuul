@@ -29,6 +29,10 @@ public class Player extends Character{
         System.out.println(item.getName() + " added to inventory.");
     }
 
+    public boolean invIsEmpty(){
+        return items.isEmpty();
+    }
+
 
     public int availableSpace(){
         return (maxWeight - weight);
@@ -40,6 +44,7 @@ public class Player extends Character{
      */
     public void removeItem(Item item){
         items.remove(item);
+        weight -= item.getWeight();
         System.out.println(item.getName() + " removed from inventory.");
     }
 

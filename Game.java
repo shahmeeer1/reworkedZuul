@@ -1,24 +1,25 @@
-import java.util.ArrayList;
 import java.util.List;
-// TODO implement finditembyname method in certain places.
-// TODO Take another look at back class.
-// TODO report
+
 
 /**
- *  This class is the main class of the "World of Zuul" application. 
- *  "World of Zuul" is a very simple, text based adventure game.  Users 
- *  can walk around some scenery. That's all. It should really be extended 
- *  to make it more interesting!
- * 
+ *  This class is the main class of the "Westeros" application.
+ *  "Westeros" is a text based adventure game, inspired by the
+ *  book series 'A song of Ice and Fire' and television series
+ *  'Game of Thrones' written by George R.R Martin and produced by HBO.
+ *
+ *  Names of some characters, locations and the name of the game 'Westeros'
+ *  are inspired by 'A song of Ice and Fire'. The storyline of the game however,
+ *  is my own work.
+ *
  *  To play this game, create an instance of this class and call the "play"
  *  method.
- * 
+ *
  *  This main class creates and initialises all the others: it creates all
- *  rooms, creates the parser and starts the game.  It also evaluates and
+ *  rooms, NPCs, items; creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
- * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ *
+ * @author  Michael Kölling, David J. Barnes and Shahmeer Khalid
+ * @version 2024.11.23
  */
 
 public class Game 
@@ -66,6 +67,12 @@ public class Game
         ironThrone = roomManager.addRoom("iron throne",new Room("iron throne", "sitting on the iron throne", true,
                                 Item.SWORD, Item.CROWN, Item.DRAGONEGG));
 
+        // Add quests for locked rooms. A quest is simply some text to advance the story of the game
+        //  and assist the player
+        ironThrone.setQuest("Do you dare to play the Game of Thrones...");
+        dragonStone.setQuest("The key to Dragon Stone lies in the lion's den");
+        kingsLanding.setQuest("King's Landing...The heart of the Seven Kingdoms.\nTo gain entry, seek the item hidden where the river bends...");
+
         // initialise room exits
         kingsLanding.setExit("north", ironThrone);
         kingsLanding.setExit("east", dragonStone);
@@ -110,7 +117,6 @@ public class Game
 
     private void addItems(){
         roomManager.getRoom("high garden").addToStorage(Item.COMPASS);
-        roomManager.getRoom("dragon stone").addToStorage(Item.CROWN);
         roomManager.getRoom("dragon stone").addToStorage(Item.CROWN);
         roomManager.getRoom("casterly rock").addToStorage(Item.DAGGER);
         roomManager.getRoom("casterly rock").addToStorage(Item.POTION);
@@ -267,6 +273,7 @@ public class Game
         if (nextRoom.isLocked()) {
             if (!canUnlock(nextRoom)){   // If room cannot be unlocked, return
                 System.out.println("The room is locked...");
+                System.out.println(nextRoom.getQuest());
                 return;
             }
             // If room can be unlocked, unlock it.
@@ -322,10 +329,9 @@ public class Game
     private void unlockRoom(Room nextRoom){
         // Retrieve room storage and player inventory
         List<Item> requirements = nextRoom.getRequiredItems();
-        ArrayList<Item> playerInv = player.getInventory();
         // Remove required items from player inventory
         for (Item item: requirements){
-            playerInv.remove(item);
+            player.removeItem(item);
         }
         // Update room status to unlocked
         nextRoom.unlockRoom();
@@ -358,11 +364,11 @@ public class Game
             return;
         }
 
-        if (command.getSecondWord().toLowerCase().equals("inventory")){
+        if (command.getSecondWord().equalsIgnoreCase("inventory")){
             // Display the items in the player's inventory.
             player.printInventory();
         }
-        else if (command.getSecondWord().toLowerCase().equals("room")){
+        else if (command.getSecondWord().equalsIgnoreCase("room")){
             // Display the items in the room.
             currentRoom.showStorage();
         }
@@ -380,7 +386,7 @@ public class Game
     private void take(Command command){
         if(!command.hasSecondWord()) {
             // If there is no second word we don't know what to search
-            System.out.println("Take what?\n");
+            System.out.println("Take what?");
             return;
         }
 
@@ -388,7 +394,7 @@ public class Game
         Item itemToTake = currentRoom.getItem(command.getSecondWord());
 
         if (itemToTake == null){
-            System.out.println("Take what?\n");
+            System.out.println("Take what?");
             return;
         }
         else if (itemToTake.isLocked()){
@@ -425,6 +431,9 @@ public class Game
             // player moves to previous room
             currentRoom = room;
             System.out.println(currentRoom.getLongDescription());
+            Npc.moveNpc();// Move NPCs to new room
+            Npc.npcInRoom(currentRoom);
+
         }
     }
 
@@ -434,86 +443,107 @@ public class Game
      * @param command
      */
     private void dropItem(Command command){
-        ArrayList<Item> playerInv = player.getInventory();
 
         // Cannot drop an item if the inventory is empty
         // or if no item to drop is given
-        if (playerInv.isEmpty() || !command.hasSecondWord()){
+        if (!command.hasSecondWord()){
+            System.out.println("Drop What?\n");
+            return;
+        } else if (player.invIsEmpty()) {
+            System.out.println("Your inventory is empty...");
             return;
         }
 
         // Drop the item and add it to the room storage
-        for (Item item: playerInv){
-            if (item.getName().equalsIgnoreCase(command.getSecondWord())){
-                playerInv.remove(item); // Remove item from player inventory
-                currentRoom.addToStorage(item); // Add item top game storage
-            }
+        Item itemToDrop = Item.findByName(command.getSecondWord());
+        if (itemToDrop == null){
+            System.out.println("You don't have that item");
+        }
+        else{
+            player.removeItem(itemToDrop); // Remove item from player inventory
+            currentRoom.addToStorage(itemToDrop); // Add item top game storage
+
         }
     }
 
+
+
     private void trade(Command command){
-        // Cannot trade if no player or item is named
+
+        // Ensure that user input has second and third word
         if(!command.hasSecondWord() || !command.hasThirdWord()){
             System.out.println("Trade what?");
             return;
         }
-        // Get NPC to trade with
+        // Ensure that npc they wish to trade with is in the room
         Npc npc = Npc.getNpc(command.getSecondWord());
 
+        // validate the npc
+        if (!npcTradeValidation(npc)) return;
 
-        if(npc == null){
-            System.out.println("Trade who?");
-            return;
-        }
-
-        ArrayList<Item> playerInv = player.getInventory();
-        ArrayList<Item> NpcInv = npc.getInventory();
-
-        // player may view the NPCs trade offer by using command 'trade [NPC name] offer'.
-        if (command.getThirdWord().equals("offer")) {
+        if (command.getThirdWord().equalsIgnoreCase("offer")){
             npc.printInventory();
             return;
-        }   // Check if the player has the item they wish to trade in their inventory
+        }
 
-        Item itemToTrade = Item.findByName(command.getThirdWord());
+        // The user command will contain the item they wish to receive.
+        // check if the item name they have entered exists
 
-        if (itemToTrade == null || !playerInv.contains(itemToTrade)){
-            // If user does not have the item they wish to trade, print error message.
-            System.out.println("you dont have that");
+        Item itemToReceive = Item.findByName(command.getThirdWord());
+        if (itemToReceive == null){
+            System.out.println("Trade what item?");
             return;
         }
-        else if (NpcInv.isEmpty()) {
-            System.out.println(npc.getName() + " Has nothing to offer...");
+
+        // Check if npc has that item
+        if(!npc.hasItem(itemToReceive)){
+            System.out.println(npc.getName() + " does not have this item");
             return;
         }
-        String itemToReceiveName = itemToTrade.getTradeFor();
-        Item itemToReceive = null;
 
-        if(itemToReceiveName == null){
-            System.out.println(npc.getName() + " doesn't want that item!");
+        // try to get the item the npc wants in return
+        String itemToGiveName = itemToReceive.getTradeFor();
+        if (itemToGiveName == null){
+            System.out.println("You do not have anything " + npc.getName() +" wants...");
             return;
         }
-        else{
-            try{
-                itemToReceive = Item.findByName(itemToReceiveName);
-            } catch (Exception e) {System.out.println("Error trading. Item not initialised correctly!!");}
+        Item itemToGive = Item.findByName(itemToGiveName);
+
+        // check if the player has that item
+        if(!player.hasItem(itemToGive)){
+            System.out.println("You do not have anything " + npc.getName() + " wants...");
+            return;
         }
 
-        // Conduct trade
-        assert itemToReceive != null;
-        NpcInv.remove(itemToReceive);
-        NpcInv.add(itemToTrade);
-        if (player.availableSpace() >= itemToReceive.getWeight()){
+        // swap items and remove from inventories
+        npc.removeItem(itemToReceive);
+        npc.addItem(itemToGive);
 
-            player.addItem(itemToReceive);
-        }
-        else{
-            System.out.println("Not enough space in inventory");
-            System.out.println("Item dropped somewhere in room");
+        player.removeItem(itemToGive);
+
+        // If player has enough space in inventory, add the item otherwise add it to room storage
+        if (itemToReceive.getWeight() > player.availableSpace()){
+            System.out.println("\nOpps! you don't have enough space in you inventory");
+            System.out.println("The item was dropped somewhere in the room");
             currentRoom.addToStorage(itemToReceive);
+        }
+        else{
+            player.addItem(itemToReceive);
         }
 
     }
+
+    private boolean npcTradeValidation(Npc npc) {
+        if (npc == null){
+            System.out.println("Trade Who?");
+            return false;
+        } else if (!npc.getCurrentRoom().equals(currentRoom)) {
+            System.out.println(npc.getName() + " is not at this location");
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * Method to check if the player has won the game.
