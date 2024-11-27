@@ -1,11 +1,7 @@
 import java.util.List;
 
-
 /**
- *  This class is the main class of the "Westeros" application.
- *  "Westeros" is a text based adventure game, inspired by the
- *  book series 'A song of Ice and Fire' and television series
- *  'Game of Thrones' written by George R.R Martin and produced by HBO.
+ *  This class is the GameManager class of the "Westeros" application.
  *
  *  Names of some characters, locations and the name of the game 'Westeros'
  *  are inspired by 'A song of Ice and Fire'. The storyline of the game however,
@@ -14,8 +10,8 @@ import java.util.List;
  *  To play this game, create an instance of this class and call the "play"
  *  method.
  *
- *  This main class creates and initialises all the others: it creates all
- *  rooms, NPCs, items; creates the parser and starts the game.  It also evaluates and
+ *  This class creates and initialises all the others: it creates all
+ *  rooms, NPCs, items; creates the parser.  It also evaluates and
  *  executes the commands that the parser returns.
  *
  * @author  Michael Kölling, David J. Barnes and Shahmeer Khalid
@@ -29,7 +25,6 @@ public class GameManager
     private Back stack;
     private RoomManager roomManager;
     private Player player;
-    //private boolean active = true;
 
     /**
      * Create the game and initialise its internal map.
@@ -146,34 +141,11 @@ public class GameManager
 
     }
 
-    /**
-     *  Main play routine.  Loops until end of play.
-     */
-//    private void play()
-//    {
-//        if(!active){return;}
-//        /*
-//        Do not start if game is inactive. This is to prevent a player calling the play method
-//        on the game a second time after they have already quit or won the game.
-//         */
-//
-//        printWelcome(); // Display welcome message
-//
-//        Npc.npcInRoom(currentRoom); // Check if any npcs are in the starting room
-//
-//        boolean finished = false;   // Flag to track if player quit
-//        boolean won = false;        // Flag to track if player won game
-//
-//        while (!finished && !won) {
-//            Command command = parser.getCommand();  // Read users input
-//            finished = processCommand(command); // Process users input
-//            won = winCheck();   // Check if player has won the game
-//        }
-//
-//        active = false; // Mark game as inactive
-//        System.out.println("\nThank you for playing!");
-//    }
 
+    /**
+     * Check if the game has finished by user entering quit command or winning.
+     * @return true if game is finished or player has won
+     */
     public boolean checkFinished() {
 
         Command command = parser.getCommand();  // Read users input
@@ -187,24 +159,11 @@ public class GameManager
         Npc.npcInRoom(currentRoom);
     }
 
-//    /**
-//     * Display game'sopening message
-//     */
-//    private void printWelcome()
-//    {
-//        System.out.println();
-//        System.out.println("Welcome to Westeros!");
-//        System.out.println();
-//        System.out.println("You are a Nobleman in Westeros, in the year 214 AC (After Conquest).");
-//        System.out.println("The realm is in turmoil, and the battle for power rages across the land.");
-//        System.out.println("The struggle for the Iron Throne has begun...");
-//        System.out.println("Will you claim it, or fall victim to the games of power?");
-//        System.out.println("The choice is yours, but beware...");
-//        System.out.println("In the game of thrones, you win or you die.\n");
-//        System.out.println("Type 'help' to view game commands.");
-//        System.out.println(currentRoom.getLongDescription());
-//    }
 
+    /**
+     * Retrieve the description string of the current room
+     * @return room description string
+     */
     public String getRoomLongDescription(){
         return currentRoom.getLongDescription();
     }

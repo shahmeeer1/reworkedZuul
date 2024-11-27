@@ -42,6 +42,10 @@ public class Npc extends Character{
     /**
      * Class method to move every npc to a new room. Npcs are only moved
      * to rooms that are unlocked and are connected to their current room.
+     * First the method will check if the npc is ready to move by checking its counter
+     * Next it will pick a random room from the rooms connected to the npcs current room
+     * It will continue picking a room till one is picked that is not locked.
+     * Finally, the npc will be moved tto that room.
      */
     public static void moveNpc(){
         Random randnum = new Random();

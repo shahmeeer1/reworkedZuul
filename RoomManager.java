@@ -17,8 +17,13 @@ import java.util.Set;
 
 public class RoomManager {
 
-    private  HashMap<String, Room> roomList = new HashMap();
-    private  Room transporterRoom;    // Transporter room teleports player to a random unlocked room
+    private HashMap<String, Room> roomList;
+    private Room transporterRoom;    // Transporter room teleports player to a random unlocked room
+
+
+    public RoomManager(){
+        roomList = new HashMap();
+    }
 
     /**
      * Adds room to list of rooms
@@ -47,7 +52,9 @@ public class RoomManager {
     public void setTransporterRoom(Room room){transporterRoom = room;}
 
     /**
-     * Returns a randomly selected room from the list of rooms
+     * Returns a randomly selected room from the list of rooms.
+     * If the randomly picked room is the transporter room it will
+     * keep picking till it picks one that isn't.
      * @return randomly selected room
      */
     public  Room getRandomRoom() {
